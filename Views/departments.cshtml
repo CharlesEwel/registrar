@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>departments</title>
+  </head>
+  <body>
+    <h1>Departments</h1>
+    <ul>
+      @foreach(var department in Model)
+      {
+        <li><a href="/departments/@department.GetId()">@department.GetName()</a></li>
+      }
+      <a href="/departments/new">Add New Department</a>
+      <a href="/">Return Home</a>
+    </ul>
+  </body>
+</html>

@@ -10,9 +10,16 @@
       <label for="course-name">Course Name</label>
       <input type="text" name="course-name" required>
       <select name="department">
-        <option value=1>Computer Science</option>
-        <option value=2>English</option>
-        <option value=3>Music</option>
+        @foreach(var department in Model)
+        {
+          @if(department.GetName() == "Music")
+          {
+            <option value="@department.GetId()" selected="selected">@department.GetName()</option>
+          }
+          else{
+            <option value="@department.GetId()">@department.GetName()</option>
+          }
+        }
       </select>
       <button type="submit">Submit</button>
     </form>

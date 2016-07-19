@@ -187,6 +187,31 @@ namespace Registrar.Objects
        }
      }
 
+     public void DropCourse(int courseID)
+     {
+       SqlConnection conn = DB.Connection();
+       conn.Open();
+
+       SqlCommand cmd = new SqlCommand("DELETE FROM class_enrollment WHERE class_enrollment.student_id = @StudentId AND class_enrollment.course_id = @CourseId;", conn);
+
+       SqlParameter idParameter = new SqlParameter();
+       idParameter.ParameterName = "@StudentId";
+       idParameter.Value = this.GetId();
+
+       SqlParameter courseIDParameter = new SqlParameter();
+       courseIDParameter.ParameterName = "@CourseId";
+       courseIDParameter.Value = courseID;
+
+       cmd.Parameters.Add(idParameter);
+       cmd.Parameters.Add(courseIDParameter);
+
+       cmd.ExecuteNonQuery();
+
+       if (conn != null)
+       {
+         conn.Close();
+       }
+     }
 
      public List<Course> GetCourses()
      {
@@ -199,7 +224,7 @@ namespace Registrar.Objects
        SqlParameter idParameter = new SqlParameter();
        idParameter.ParameterName = "@StudentId";
        idParameter.Value = _id;
-        Console.WriteLine(_id);
+
 
        cmd.Parameters.Add(idParameter);
        rdr = cmd.ExecuteReader();
@@ -212,7 +237,6 @@ namespace Registrar.Objects
 
        while(rdr.Read())
        {
-         Console.WriteLine("hello");
          foundCourseName = rdr.GetString(0);
          foundCourseDeparmentId = rdr.GetInt32(1);
          foundCourseId = rdr.GetInt32(2);
@@ -231,5 +255,79 @@ namespace Registrar.Objects
        return foundCourses;
      }
 
+     public void AddMajor(int departmentID)
+     {
+       SqlConnection conn = DB.Connection();
+       conn.Open();
+
+       SqlCommand cmd = new SqlCommand("INSERT INTO majors (student_id, department_id) VALUES (@StudentID, @DepartmentID);", conn);
+
+       SqlParameter idParameter = new SqlParameter();
+       idParameter.ParameterName = "@StudentID";
+       idParameter.Value = this.GetId();
+
+       SqlParameter departmentIDParameter = new SqlParameter();
+       departmentIDParameter.ParameterName = "@DepartmentID";
+       departmentIDParameter.Value = departmentID;
+
+       cmd.Parameters.Add(idParameter);
+       cmd.Parameters.Add(departmentIDParameter);
+
+       cmd.ExecuteNonQuery();
+
+       if (conn != null)
+       {
+         conn.Close();
+       }
+     }
+
+     public List<Department> GetMajors()
+     {
+       SqlConnection conn = DB.Connection();
+       SqlDataReader rdr;
+       conn.Open();
+
+       SqlCommand cmd = new SqlCommand("SELECT departments.* FROM students JOIN majors ON (students.id = majors.student_id)	JOIN departments ON (majors.department_id = departments.id)	WHERE students.id = @StudentId;", conn);
+
+       SqlParameter idParameter = new SqlParameter();
+       idParameter.ParameterName = "@StudentId";
+       idParameter.Value = _id;
+
+
+       cmd.Parameters.Add(idParameter);
+       rdr = cmd.ExecuteReader();
+
+       List<Department> foundMajors = new List<Department>{};
+
+       string foundMajorName = null;
+       int foundDepartmentId = 0;
+
+       while(rdr.Read())
+       {
+         foundMajorName = rdr.GetString(0);
+         foundDepartmentId = rdr.GetInt32(1);
+         Department foundMajor = new Department(foundMajorName, foundDepartmentId);
+         foundMajors.Add(foundMajor);
+       }
+
+       if (rdr != null)
+       {
+         rdr.Close();
+       }
+       if (conn != null)
+       {
+         conn.Close();
+       }
+       return foundMajors;
+     }
+
+     public List<Course> GetAllCourses()
+     {
+       return Course.GetAll();
+     }
+     public List<Department> GetAllDepartments()
+     {
+       return Department.GetAll();
+     }
   }
 }

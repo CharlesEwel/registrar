@@ -7,15 +7,16 @@ using Registrar.Objects;
 
 namespace Registrar.Tests
 {
-  public class CourseTest : IDisposable
+  public class DepartmentTest : IDisposable
   {
-    public CourseTest()
+    public DepartmentTest()
     {
       DBConfiguration.ConnectionString = "Data Source=(localdb)\\mssqllocaldb;Initial Catalog=registrar_tutorial_test;Integrated Security=SSPI;";
     }
 
     public void Dispose()
     {
+      Department.DeleteAll();
       Course.DeleteAll();
       Student.DeleteAll();
     }
@@ -24,7 +25,7 @@ namespace Registrar.Tests
     public void Test_DatabaseEmptyAtFirst()
     {
       //Arrange, Act
-      int result = Course.GetAll().Count;
+      int result = Department.GetAll().Count;
       //Assert
       Assert.Equal(0,result);
     }
@@ -33,23 +34,23 @@ namespace Registrar.Tests
     public void Test_Equal_ReturnsTrueIfNamesAndEnrollmentDatesAreTheSame()
     {
       //Arrange, Act
-      Course firstCourse = new Course("CS101", 1);
-      Course secondCourse = new Course("CS101", 1);
+      Department firstDepartment = new Department("History");
+      Department secondDepartment = new Department("History");
 
       //Assert
-      Assert.Equal(firstCourse, secondCourse);
+      Assert.Equal(firstDepartment, secondDepartment);
     }
 
     [Fact]
     public void Test_Save_SavesToDatabase()
     {
       //Arrange
-      Course testCourse = new Course("CS101", 1);
+      Department testDepartment = new Department("History");
 
       //Act
-      testCourse.Save();
-      List<Course> result = Course.GetAll();
-      List<Course> testList = new List<Course>{testCourse};
+      testDepartment.Save();
+      List<Department> result = Department.GetAll();
+      List<Department> testList = new List<Department>{testDepartment};
 
       //Assert
       Assert.Equal(testList, result);
@@ -59,31 +60,31 @@ namespace Registrar.Tests
     public void Test_Save_AssignsIdToObject()
     {
       //Arrange
-      Course testCourse = new Course("CS101", 1);
+      Department testDepartment = new Department("History");
 
       //Act
-      testCourse.Save();
-      Course savedCourse = Course.GetAll()[0];
+      testDepartment.Save();
+      Department savedDepartment = Department.GetAll()[0];
 
-      int result = savedCourse.GetId();
-      int testId = testCourse.GetId();
+      int result = savedDepartment.GetId();
+      int testId = testDepartment.GetId();
 
       //Assert
       Assert.Equal(testId, result);
     }
 
     [Fact]
-    public void Test_Find_FindsCourseInDatabase()
+    public void Test_Find_FindsDepartmentInDatabase()
     {
       //Arrange
-      Course testCourse = new Course("CS101", 1);
-      testCourse.Save();
+      Department testDepartment = new Department("History");
+      testDepartment.Save();
 
       //Act
-      Course foundCourse = Course.Find(testCourse.GetId());
+      Department foundDepartment = Department.Find(testDepartment.GetId());
 
       //Assert
-      Assert.Equal(testCourse, foundCourse);
+      Assert.Equal(testDepartment, foundDepartment);
     }
   }
 }

@@ -100,7 +100,59 @@ namespace Registrar.Tests
       List<Course> expectedList= new List<Course>{testCourse};
 
       Assert.Equal(expectedList, resultList);
+    }
 
+    [Fact]
+    public void Test_DropCourse_DropsSelectedCourse()
+    {
+      Student testStudent = new Student("Bob", enrollmentDate);
+      testStudent.Save();
+      Course testCourse1 = new Course("CS101", 1);
+      testCourse1.Save();
+      testStudent.AddCourse(testCourse1.GetId());
+      Course testCourse2 = new Course("PHIL101", 2);
+      testCourse2.Save();
+      testStudent.AddCourse(testCourse2.GetId());
+
+      testStudent.DropCourse(testCourse1.GetId());
+
+      List<Course> resultList = testStudent.GetCourses();
+      List<Course> expectedList= new List<Course>{testCourse2};
+
+      Assert.Equal(expectedList, resultList);
+    }
+    [Fact]
+    public void Test_AddMajor_DisplaysAddedMajors()
+    {
+      Student testStudent = new Student("Bob", enrollmentDate);
+      testStudent.Save();
+      Department testDepartment = new Department("History");
+      testDepartment.Save();
+
+      testStudent.AddMajor(testDepartment.GetId());
+      List<Department> resultList = testStudent.GetMajors();
+      List<Department> expectedList= new List<Department>{testDepartment};
+
+      Assert.Equal(expectedList, resultList);
+    }
+    [Fact]
+    public void Test_DropMajor_DropsSelectedMajor()
+    {
+      Student testStudent = new Student("Bob", enrollmentDate);
+      testStudent.Save();
+      Department testDepartment1 = new Department("CS101");
+      testDepartment1.Save();
+      testStudent.AddMajor(testDepartment1.GetId());
+      Department testDepartment2 = new Department("P");
+      testDepartment2.Save();
+      testStudent.AddMajor(testDepartment2.GetId());
+
+      testStudent.DropMajor(testDepartment1.GetId());
+
+      List<Department> resultList = testStudent.GetDepartments();
+      List<Department> expectedList= new List<Department>{testDepartment2};
+
+      Assert.Equal(expectedList, resultList);
     }
 
   }

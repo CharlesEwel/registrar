@@ -50,7 +50,8 @@ namespace Registrar.Objects
 
     public static List<Course> GetAll()
     {
-      List<Course> allCourses = new List<Course>{};
+
+      List<Course> allCourses = new List<Course> {};
 
       SqlConnection conn = DB.Connection();
       SqlDataReader rdr = null;
@@ -114,6 +115,7 @@ namespace Registrar.Objects
       {
         conn.Close();
       }
+
     }
 
     public static Course Find(int id)
@@ -151,6 +153,11 @@ namespace Registrar.Objects
         conn.Close();
       }
       return foundCourse;
+    }
+
+    public List<Department> GetAllDepartments()
+    {
+      return Department.GetAll();
     }
 
     public static void DeleteAll()

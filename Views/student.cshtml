@@ -14,17 +14,41 @@
     <h4>Courses:</h4>
     @if(Model.GetCourses().Count == 0)
     {
-      Student has not signed up for any courses
+      <p>
+        Student has not signed up for any courses
+      </p>
     }
     else
     {
       <ul>
         @foreach(var course in Model.GetCourses())
         {
-          <li>course.GetName()</li>
+          <li>@course.GetName()</li>
         }
       </ul>
-    }
+    <form class="form-group" action="/students/@Model.GetId()/deleteCourse" method="post">
+      <select name="course">
+        @foreach(var course in Model.GetCourses())
+        {
+          <option value="@course.GetId()">@course.GetName()</option>
+        }
+      </select>
+      <button type="submit">Delete Course</button>
+    </form>
+  }
+  <h4>Add a class</h4>
+  <form class="form-group" action="/students/@Model.GetId()/addCourse" method="post">
+    <select name="course">
+      @foreach(var course in Model.GetAllCourses())
+      {
+        if(!Model.GetCourses().Contains(course))
+        {
+          <option value="@course.GetId()">@course.GetName()</option>
+        }
+      }
+    </select>
+    <button type="submit">Add Course</button>
+  </form>
     <a href="/students">View All Students</a>
     <a href="/">Home</a>
   </body>

@@ -70,6 +70,54 @@ namespace Registrar
         return View["student.cshtml", student];
       };
 
+      Post["/students/{id}/updatemajors"]=parameters=>
+      {
+        Student student = Student.Find(parameters.id);
+        int majorCount = student.GetMajors().Count;
+        if(majorCount == 0 && Request.Form["new-major"] !=0)
+        {
+          student.AddMajor(Request.Form["new-major"]);
+        }
+        else if(majorCount == 1)
+        {
+          if(Request.Form["current-major"]==0)
+          {
+            student.DropMajor(Request.Form["current-major"]);
+          }
+          else if(Request.Form["current-major"]!=student.GetMajors()[0].GetId())
+          {
+            student.DropMajor(student.GetMajors()[0].GetId());
+            student.AddMajor(Request.Form["current-major"]);
+          }
+          if(Request.Form["additional-major"] !=0)
+          {
+            student.AddMajor(Request.Form["additonal-major"]);
+          }
+        }
+        else
+        {
+          if(Request.Form["first-major"]==0)
+          {
+            student.DropMajor(Request.Form["first-major"]);
+          }
+          else if(Request.Form["first-major"]!=student.GetMajors()[0].GetId())
+          {
+            student.DropMajor(student.GetMajors()[0].GetId());
+            student.AddMajor(Request.Form["first-major"]);
+          }
+          if(Request.Form["second-major"]==0)
+          {
+            student.DropMajor(Request.Form["second-major"]);
+          }
+          else if(Request.Form["second-major"]!=student.GetMajors()[1].GetId())
+          {
+            student.DropMajor(student.GetMajors()[1].GetId());
+            student.AddMajor(Request.Form["second-major"]);
+          }
+        }
+        return View["student.cshtml", student];
+      };
+
       Get["/departments"]=_=>
       {
         List<Department> departments = Department.GetAll();

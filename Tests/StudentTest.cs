@@ -140,16 +140,16 @@ namespace Registrar.Tests
     {
       Student testStudent = new Student("Bob", enrollmentDate);
       testStudent.Save();
-      Department testDepartment1 = new Department("CS101");
+      Department testDepartment1 = new Department("Chinese");
       testDepartment1.Save();
       testStudent.AddMajor(testDepartment1.GetId());
-      Department testDepartment2 = new Department("P");
+      Department testDepartment2 = new Department("Spanish");
       testDepartment2.Save();
       testStudent.AddMajor(testDepartment2.GetId());
 
       testStudent.DropMajor(testDepartment1.GetId());
 
-      List<Department> resultList = testStudent.GetDepartments();
+      List<Department> resultList = testStudent.GetMajors();
       List<Department> expectedList= new List<Department>{testDepartment2};
 
       Assert.Equal(expectedList, resultList);

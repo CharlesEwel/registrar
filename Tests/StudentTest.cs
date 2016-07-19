@@ -18,6 +18,7 @@ namespace Registrar.Tests
     public void Dispose()
     {
       Student.DeleteAll();
+      Course.DeleteAll();
     }
 
     [Fact]
@@ -44,8 +45,7 @@ namespace Registrar.Tests
     public void Test_Save_SavesToDatabase()
     {
       //Arrange
-      DateTime? taskDate = new DateTime(2016, 7, 12);
-      Student testStudent = new Student("Chad", taskDate);
+      Student testStudent = new Student("Chad", enrollmentDate);
 
       //Act
       testStudent.Save();
@@ -55,23 +55,53 @@ namespace Registrar.Tests
       //Assert
       Assert.Equal(testList, result);
     }
-    
-    // [Fact]
-    // public void Test_Save_AssignsIdToObject()
-    // {
-    //   //Arrange
-    //   DateTime? taskDate = new DateTime(2016, 7, 12);
-    //   Student testStudent = new Student("Chad", taskDate);
-    //
-    //   //Act
-    //   testStudent.Save();
-    //   Student savedStudent = Student.GetAll()[0];
-    //
-    //   int result = savedStudent.GetId();
-    //   int testId = testStudent.GetId();
-    //
-    //   //Assert
-    //   Assert.Equal(testId, result);
-    // }
+
+    [Fact]
+    public void Test_Save_AssignsIdToObject()
+    {
+      //Arrange
+      Student testStudent = new Student("Chad", enrollmentDate);
+
+      //Act
+      testStudent.Save();
+      Student savedStudent = Student.GetAll()[0];
+
+      int result = savedStudent.GetId();
+      int testId = testStudent.GetId();
+
+      //Assert
+      Assert.Equal(testId, result);
+    }
+
+    [Fact]
+    public void Test_Find_FindsStudentInDatabase()
+    {
+      //Arrange
+      Student testStudent = new Student("Chad", enrollmentDate);
+      testStudent.Save();
+
+      //Act
+      Student foundStudent = Student.Find(testStudent.GetId());
+
+      //Assert
+      Assert.Equal(testStudent, foundStudent);
+    }
+
+    [Fact]
+    public void Test_AddCourse_DisplaysAddedCourses()
+    {
+      Student testStudent2 = new Student("Bob", enrollmentDate);
+      testStudent2.Save();
+      Course testCourse = new Course("CS101", 1);
+      testCourse.Save();
+
+      testStudent2.AddCourse(testCourse.GetId());
+      List<Course> resultList = testStudent2.GetCourses();
+      List<Course> expectedList= new List<Course>{testCourse};
+
+      Assert.Equal(expectedList, resultList);
+
+    }
+
   }
 }

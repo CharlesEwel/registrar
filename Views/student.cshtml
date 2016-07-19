@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>@Model.GetName()</title>
+  </head>
+  <body>
+    <h1>@Model.GetName()</h1>
+
+    <p>
+      Enrollment Date: @Model.GetEnrollmentDate();
+    </p>
+
+    <h4>Courses:</h4>
+    @if(Model.GetCourses().Count == 0)
+    {
+      Student has not signed up for any courses
+    }
+    else
+    {
+      <ul>
+        @foreach(var course in Model.GetCourses())
+        {
+          <li>course.GetName()</li>
+        }
+      </ul>
+    }
+    <a href="/students">View All Students</a>
+    <a href="/">Home</a>
+  </body>
+</html>

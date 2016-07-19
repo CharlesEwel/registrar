@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Students</title>
+  </head>
+  <body>
+    <ul>
+      @foreach(var student in Model)
+      {
+        <li><a href="/students/@student.GetId()">@student.GetName()</a></li>
+      }
+    </ul>
+    <a href="/students/new">Add Student</a>
+    <a href="/">Home</a>
+  </body>
+</html>

@@ -104,7 +104,7 @@ namespace Registrar.Objects
 
       while(rdr.Read())
       {
-        this._id = rdr.GetInt32(2);
+        this._id = rdr.GetInt32(0);
       }
       if (rdr != null)
       {
@@ -116,12 +116,119 @@ namespace Registrar.Objects
       }
     }
 
+    public static Student Find(int id)
+    {
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr = null;
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT * FROM students WHERE id = @StudentId;", conn);
+      SqlParameter studentIdParameter = new SqlParameter();
+      studentIdParameter.ParameterName = "@StudentId";
+      studentIdParameter.Value = id.ToString();
+      cmd.Parameters.Add(studentIdParameter);
+      rdr = cmd.ExecuteReader();
+
+
+      int foundStudentId = 0;
+      string foundStudentName = null;
+      DateTime? foundStudentEnrollmentDate = null;
+
+      while(rdr.Read())
+      {
+        foundStudentName = rdr.GetString(0);
+        foundStudentEnrollmentDate = rdr.GetDateTime(1);
+        foundStudentId = rdr.GetInt32(2);
+      }
+      Student foundStudent = new Student(foundStudentName, foundStudentEnrollmentDate, foundStudentId);
+
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+      return foundStudent;
+    }
+
     public static void DeleteAll()
      {
        SqlConnection conn = DB.Connection();
        conn.Open();
        SqlCommand cmd = new SqlCommand("DELETE FROM students; DELETE FROM majors; DELETE FROM class_enrollment", conn);
        cmd.ExecuteNonQuery();
+     }
+
+     public void AddCourse(int courseID)
+     {
+       SqlConnection conn = DB.Connection();
+       conn.Open();
+
+       SqlCommand cmd = new SqlCommand("INSERT INTO class_enrollment (student_id, course_id, isComplete) VALUES (@StudentID, @CourseID, 0);", conn);
+
+       SqlParameter idParameter = new SqlParameter();
+       idParameter.ParameterName = "@StudentID";
+       idParameter.Value = this.GetId();
+
+       SqlParameter courseIDParameter = new SqlParameter();
+       courseIDParameter.ParameterName = "@CourseID";
+       courseIDParameter.Value = courseID;
+
+       cmd.Parameters.Add(idParameter);
+       cmd.Parameters.Add(courseIDParameter);
+
+       cmd.ExecuteNonQuery();
+
+       if (conn != null)
+       {
+         conn.Close();
+       }
+     }
+
+
+     public List<Course> GetCourses()
+     {
+       SqlConnection conn = DB.Connection();
+       SqlDataReader rdr;
+       conn.Open();
+
+       SqlCommand cmd = new SqlCommand("SELECT courses.* FROM students JOIN class_enrollment ON (students.id = class_enrollment.student_id)	JOIN courses ON (class_enrollment.course_id = courses.id)	WHERE students.id = @StudentId;", conn);
+
+       SqlParameter idParameter = new SqlParameter();
+       idParameter.ParameterName = "@StudentId";
+       idParameter.Value = _id;
+        Console.WriteLine(_id);
+
+       cmd.Parameters.Add(idParameter);
+       rdr = cmd.ExecuteReader();
+
+       List<Course> foundCourses = new List<Course>{};
+
+       string foundCourseName = null;
+       int foundCourseDeparmentId = 0;
+       int foundCourseId = 0;
+
+       while(rdr.Read())
+       {
+         Console.WriteLine("hello");
+         foundCourseName = rdr.GetString(0);
+         foundCourseDeparmentId = rdr.GetInt32(1);
+         foundCourseId = rdr.GetInt32(2);
+         Course foundCourse = new Course(foundCourseName, foundCourseDeparmentId, foundCourseId);
+         foundCourses.Add(foundCourse);
+       }
+
+       if (rdr != null)
+       {
+         rdr.Close();
+       }
+       if (conn != null)
+       {
+         conn.Close();
+       }
+       return foundCourses;
      }
 
   }

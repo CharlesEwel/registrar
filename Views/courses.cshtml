@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Course Catalog</title>
+  </head>
+  <body>
+    <h1>Course Catalog</h1>
+    @if(Model.Count == 0)
+    {
+      <p>
+        No Courses have been added yet
+      </p>
+    }
+    else
+    {
+      <ul>
+        @foreach(var course in Model)
+        {
+          <li>@course.GetName()</li>
+        }
+      </ul>
+    }
+    <a href="/courses/new">Add A Course</a>
+    <a href="/">Home</a>
+  </body>
+</html>
